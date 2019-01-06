@@ -6,8 +6,21 @@ import boto3
 from utils import load_yaml_config
 
 
+def get_session():
+    certificate = load_yaml_config("certificate.yml")
+    session = boto3.Session(
+        aws_access_key_id = certificate.AWS_ACCESS_ID,
+        aws_secret_access_key = certificate.AWS_SECRET_KEY,
+        region_name = certificate.REGION_NAME
+    )
+    return session
+
+def get_client(session, service):
+    return session.client(service)
+
+
 def downloadFromS3(bucketname, key, filename):
-    s3_client = boto3.client('s3')
+    s3_client = get_client(get_session(), 'lambda')
     s3_client.download_file(bucketname, key, filename)
 
 
