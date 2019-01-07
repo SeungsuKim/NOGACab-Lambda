@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+rm darknet.zip
 cd env_NOGACab-Lambda/lib/python3.6/site-packages/
 zip -r9 ../../../../site-packages.zip .
 cd ../../../../
