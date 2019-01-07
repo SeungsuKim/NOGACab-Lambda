@@ -53,15 +53,22 @@ def image_analysis_handler(event, context):
             break
         print("Copied the cfg file.")
 
+        print("Start copying darknet file.")
+        result = subprocess.run(['cp', '/var/task/darknet', '/tmp/darknet'])
+        if result.returncode != 0:
+            print("Error while copying darknet file.")
+            break
+        print("Copied the darknet file")
+
         print("Start making darknet executable.")
-        result = subprocess.run(['chmod', '-R', '777', '/var/task/darknet'])
+        result = subprocess.run(['chmod', '755', '/tmp/darknet'])
         if result.returncode != 0:
             print("Error while making darknet executable.")
             break
         print("Made darknet executable.")
 
         print("Start detecting objects from image.")
-        result = subprocess.run(['./darknet', 'detect', '/tmp/yolov3.cfg',
+        result = subprocess.run(['/tmp/darknet', 'detect', '/tmp/yolov3.cfg',
                                  weightpath, imagepath], shell=True)
         if result.returncode != 0:
             print("Error while detecting objects:\n" + result.stderr)
