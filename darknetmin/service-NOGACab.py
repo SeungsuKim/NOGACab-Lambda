@@ -1,4 +1,4 @@
-from __future__ import print_function
+#from __future__ import print_function
 
 import subprocess
 import os
@@ -52,9 +52,14 @@ def image_analysis_handler(event, context):
         result = subprocess.run(['./darknet', 'detect', './cfg/yolov3.cfg',
                                  weightpath, imagepath])
         if result.returncode != 0:
-            print("Error while detecting objects:\n" + result.stderr)
+            print("Error while detecting objects:\n" + str(result.stderr))
             break
-
+        
         print("Finished detecting objects from image.")
-        print(result.stdout)
-        print(result.stderr)
+        print(str(result.stdout))
+        print(str(result.stderr))
+
+        result_file = open("/tmp/result.txt", "r")
+        print("Content of result.txt: ")
+        print(result_file.read())
+
