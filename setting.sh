@@ -17,6 +17,7 @@ unzip site-packages.zip
 unzip darknet.zip
 rm site-packages.zip
 rm darknet.zip
+chmod 755 darknet
 zip -r9 ../darknet.zip .
 cd ../
 rm -rf test

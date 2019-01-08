@@ -27,11 +27,13 @@ def downloadFromS3(bucketname, key, filename):
 
 
 def image_analysis_handler(event, context):
+    os.environ['PATH'] = os.environ['PATH'] + '/' + os.environ[
+        'LAMBDA_TASK_ROOT']
+
     for record in event['Records']:
         bucket = record['s3']['bucket']['name']
         key = record['s3']['object']['key']
         imagepath = "/tmp/" + key.split('/')[-1]
-        print("Fuck off")
         print("Start downloading image.")
         print("Bucket: {}".format(bucket))
         print("Key: {}".format(key))
@@ -46,33 +48,13 @@ def image_analysis_handler(event, context):
         downloadFromS3(bucket, key, weightpath)
         print("Downloaded weight file.")
 
-        print("Start copying cfg file.")
-        result = subprocess.run(['cp', './cfg/yolov3.cfg', '/tmp/volov3.cfg'])
-        if result.returncode != 0:
-            print("Error while copying cfg file:\n" + result.stderr)
-            break
-        print("Copied the cfg file.")
-
-        print("Start copying darknet file.")
-        result = subprocess.run(['cp', '/var/task/darknet', '/tmp/darknet'])
-        if result.returncode != 0:
-            print("Error while copying darknet file.")
-            break
-        print("Copied the darknet file")
-
-        print("Start making darknet executable.")
-        result = subprocess.run(['chmod', '755', '/tmp/darknet'])
-        if result.returncode != 0:
-            print("Error while making darknet executable.")
-            break
-        print("Made darknet executable.")
-
         print("Start detecting objects from image.")
-        result = subprocess.run(['/tmp/darknet', 'detect', '/tmp/yolov3.cfg',
-                                 weightpath, imagepath], shell=True)
+        result = subprocess.run(['./darknet', 'detect', './cfg/yolov3.cfg',
+                                 weightpath, imagepath])
         if result.returncode != 0:
             print("Error while detecting objects:\n" + result.stderr)
             break
 
         print("Finished detecting objects from image.")
         print(result.stdout)
+        print(result.stderr)
